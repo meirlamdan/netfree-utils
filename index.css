@@ -1,0 +1,50 @@
+.popup {
+  position: fixed;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  color: #333;
+  z-index: 9999;
+  opacity: 0.95;
+  transition: opacity 0.2s ease;
+}
+
+.yt-placeholder {
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.yt-placeholder-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  backdrop-filter: blur(2px);
+}
+
+.yt-placeholder-msg {
+  background: #00000063;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  transition: background 0.3s;
+}
+
+.yt-placeholder-link:hover .yt-placeholder-msg {
+  background: #000000b3;
+}

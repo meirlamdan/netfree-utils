@@ -18,11 +18,15 @@ function replaceIframe(iframe) {
 }
 
 function handleIframe(iframe) {
-  chrome.runtime.sendMessage({ type: 'checkLink', url: iframe.src }, (response) => {
-    if (response.block === 'unknown-video') {
-      replaceIframe(iframe);
-    }
-  });
+  try {
+    chrome.runtime.sendMessage({ type: 'checkLink', url: iframe.src }, (response) => {
+      if (response.block === 'unknown-video') {
+        replaceIframe(iframe);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 function replaceBlockedYouTubeIframes() {

@@ -34,10 +34,18 @@ function hidePopup() {
 }
 
 function fetchLinkInfo(url) {
-  return new Promise((resolve) => {
-    chrome.runtime.sendMessage({ type: 'checkLink', url }, (response) => {
-      resolve(response);
-    });
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.runtime.sendMessage({ type: 'checkLink', url }, (response) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+        } else {
+          resolve(response);
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 

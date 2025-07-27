@@ -13,3 +13,11 @@ A Chrome extension for netfree users.
 2. Open chrome://extensions/ in your browser
 3. Enable developer mode
 4. Click on "Load unpacked" and select the cloned repository folder
+
+## 💡 Got Ideas?
+
+We'd love to hear them!  
+The goal of this extension is to make life easier for NetFree users.  
+If you have feature ideas, issues you've noticed, or improvements to suggest –  
+please [open an issue](https://github.com/meirlamdan/netfree-utils/issues)
+

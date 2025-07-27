@@ -4,13 +4,18 @@
   "version": "0.0.1",
   "description": "Chrome extension for NetFree users.",
   "permissions": [
-    "scripting"
+    "scripting",
+    "webRequest",
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {

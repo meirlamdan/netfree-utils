@@ -11,7 +11,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .then(data => {
         sendResponse(data);
       })
-      .catch(console.error)
+      .catch(console.error);
 
     return true;
   }
@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 let blockedPerTab = {};
 chrome.webRequest.onCompleted.addListener(
   function (details) {
-    if (details.statusCode === 418) {
+    if (details.statusCode === 418 && details.tabId >= 0) {
       const tabId = details.tabId;
 
       if (!blockedPerTab[tabId]) {

@@ -46,3 +46,61 @@
 .yt-placeholder-link:hover .yt-placeholder-msg {
   background: #000000b3;
 }
+
+#custom-ctrl-tooltip {
+  position: absolute;
+  z-index: 2147483647; 
+  background-color: #ffffff;
+  color: #333333;
+  border: 1px solid #cccccc; 
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: sans-serif;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  pointer-events: none;
+  display: none;
+  white-space: nowrap;
+}
+
+#custom-ctrl-tooltip::before,
+#custom-ctrl-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  border-style: solid;
+}
+
+#custom-ctrl-tooltip::before {
+  border-width: 6px;
+  margin-left: -6px;
+  z-index: -1;
+}
+
+
+#custom-ctrl-tooltip::after {
+  border-width: 5px;
+  margin-left: -5px;
+  z-index: 1;
+}
+
+
+/* --- 1. מצב: הטולטיפ מתחת לקישור (החץ מצביע למעלה) --- */
+#custom-ctrl-tooltip.arrow-up::before {
+  bottom: 100%;
+  border-color: transparent transparent #cccccc transparent; /* צבע המסגרת */
+}
+#custom-ctrl-tooltip.arrow-up::after {
+  bottom: calc(100% - 1px);
+  border-color: transparent transparent #ffffff transparent; /* צבע המילוי */
+}
+
+
+#custom-ctrl-tooltip.arrow-down::before {
+  top: 100%;
+  border-color: #cccccc transparent transparent transparent; /* צבע המסגרת */
+}
+#custom-ctrl-tooltip.arrow-down::after {
+  top: calc(100% - 1px);
+  border-color: #ffffff transparent transparent transparent; /* צבע המילוי */
+}

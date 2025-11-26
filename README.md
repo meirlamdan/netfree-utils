@@ -3,7 +3,7 @@
 A Chrome extension for netfree users.
 
 - check link if it's blocked by netfree or not, (when hover over link and press alt key or ctrl key)
-- replace blocked youtube iframes with a placeholder with the video thumbnail
+- ~~replace blocked youtube iframes with a placeholder with the video thumbnail~~ (in progress)
 - Floating popup showing blocked URLs on the current tab (this feature is based on the great idea and implementation in [NetFree Helper](https://github.com/yossef7525/netfree-helper) by [yossef7525](https://github.com/yossef7525))
 - More features coming in the future
 

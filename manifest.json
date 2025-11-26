@@ -1,10 +1,9 @@
 {
   "manifest_version": 3,
   "name": "NetFree-Utils",
-  "version": "0.0.1",
-  "description": "Chrome extension for NetFree users.",
+  "version": "0.0.2",
+  "description": "עזרים וכלים למשתמשי NetFree",
   "permissions": [
-    "scripting",
     "webRequest",
     "storage"
   ],
@@ -15,7 +14,12 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
   },
   "content_scripts": [
     {
@@ -23,8 +27,6 @@
         "<all_urls>"
       ],
       "js": [
-        "src/utils.js",
-        "src/iframe-youtube.js",
         "src/check-link.js"
       ],
       "css": [
@@ -32,5 +34,10 @@
       ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  }
 }

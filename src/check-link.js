@@ -1,8 +1,3 @@
-let popup = null;
-let isHovering = false;
-let isKeyPressed = false;
-let currentLink = null;
-
 const messages = {
   unknown: 'לא נבדק ❓',
   'unknown-video': 'לא נבדק ❓',
@@ -10,102 +5,126 @@ const messages = {
   deny: 'נחסם ❌',
   'special-site': 'נחסם ❌',
   indev: 'מחפשים פתרונות... 🤔',
-}
-popup = document.createElement('div');
-popup.dir = 'rtl';
-popup.className = 'popup';
-popup.style.pointerEvents = 'none';
-popup.style.display = 'none';
-document.body.appendChild(popup);
+};
 
-function updatePopupPosition(e) {
-  popup.style.left = `${e.clientX + 10}px`;
-  popup.style.top = `${e.clientY + 10}px`;
-}
 
-function showPopup(text, e) {
-  popup.textContent = text;
-  updatePopupPosition(e);
-  popup.style.display = 'block';
-}
+const tooltip = document.createElement('div');
+tooltip.id = 'custom-ctrl-tooltip';
+document.body.appendChild(tooltip);
 
-function hidePopup() {
-  popup.style.display = 'none';
-}
+let currentTarget = null;
 
-function fetchLinkInfo(url) {
-  return new Promise((resolve, reject) => {
+document.addEventListener('mouseover', async (event) => {
+  const link = event.target.closest('a');
+  if (link && event.ctrlKey) {
+    if (currentTarget !== link) {
+      hideTooltip();
+    }
+    currentTarget = link;
     try {
-      chrome.runtime.sendMessage({ type: 'checkLink', url }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
-        } else {
-          resolve(response);
-        }
-      });
-    } catch (err) {
-      reject(err);
+      tooltip.textContent = 'בודק...';
+      tooltip.style.display = 'inline-block';
+      updateSmartPosition(link);
+      const data = await chrome.runtime.sendMessage({ type: 'checkLink', url: link.href });
+      if (currentTarget === link) {
+        const message = !data
+          ? '⚠️ שגיאה בקבלת מידע'
+          : !data.block
+            ? 'פתוח ✅'
+            : messages[data.block] || data.block;
+        tooltip.textContent = message;
+        // נעדכן את המיקום שוב כדי להתאים לגודל החדש של ההודעה
+        updateSmartPosition(link);
+      }
+    } catch (e) {
+      if (currentTarget === link) {
+        tooltip.textContent = '⚠️ שגיאה בקבלת מידע';
+        updateSmartPosition(link);
+      }
     }
-  });
-}
-
-async function maybeShowInfo(link, e) {
-  if (isHovering && isKeyPressed) {
-    showPopup("בודק ...", e);
+  } else if (currentTarget && currentTarget !== link) {
+    hideTooltip();
   }
-  try {
-    const data = await fetchLinkInfo(link.href);
-    if (isHovering && isKeyPressed && currentLink === link) {
-      showPopup(!data ? '⚠️ שגיאה בקבלת מידע' : !data.block ? 'פתוח ✅' : messages[data.block] || data.block, e);
-    }
-  } catch (err) {
-    showPopup('⚠️ שגיאה בקבלת מידע', e);
-  }
-}
-
-function addEventListenerToLink(link) {
-  link.addEventListener('mouseenter', (e) => {
-    isHovering = true;
-    currentLink = link;
-    maybeShowInfo(link, e);
-  });
-
-  link.addEventListener('mousemove', (e) => {
-    updatePopupPosition(e);
-  });
-
-  link.addEventListener('mouseleave', () => {
-    isHovering = false;
-    hidePopup();
-  });
-}
-
-document.querySelectorAll('a').forEach(link => {
-  addEventListenerToLink(link);
 });
 
-function handleKeyDown(e) {
-  if (e.altKey || e.ctrlKey) {
-    isKeyPressed = true;
-    if (isHovering && currentLink) {
-      maybeShowInfo(currentLink, e);
-    }
+document.addEventListener('mouseout', (event) => {
+  const link = event.target.closest('a');
+  if (link) {
+    hideTooltip();
   }
-}
-
-function handleKeyUp(e) {
-  if (!e.altKey && !e.ctrlKey) {
-    isKeyPressed = false;
-    hidePopup();
-  }
-}
-
-document.addEventListener('keydown', handleKeyDown);
-document.addEventListener('keyup', handleKeyUp);
-document.body.addEventListener('keydown', handleKeyDown);
-document.body.addEventListener('keyup', handleKeyUp);
-
-observeElements("a", (link) => {
-  addEventListenerToLink(link);
 });
 
+document.addEventListener('keyup', (event) => {
+  if (event.key === 'Control') {
+    hideTooltip();
+  }
+});
+
+// --- 4. פונקציית הסתרה (מעודכנת לניקוי חץ דינמי) ---
+function hideTooltip() {
+  tooltip.style.display = 'none';
+  currentTarget = null;
+  // ניקוי המחלקות הדינמיות (כפי שסיכמנו)
+  tooltip.classList.remove('arrow-up', 'arrow-down');
+}
+
+
+// --- 5. פונקציית המיקום החכם (מעודכנת לטיפול בחץ) ---
+function updateSmartPosition(element) {
+  const rect = element.getBoundingClientRect();
+  const tooltipRect = tooltip.getBoundingClientRect();
+  const gap = 8;
+  const padding = 10;
+
+  // ננקה מחלקות קודמות לפני חישוב חדש
+  tooltip.classList.remove('arrow-up', 'arrow-down');
+
+  // --- 1. חישוב אנכי (למעלה/למטה) ---
+
+  let top;
+  let arrowDirection;
+
+  // ברירת מחדל: מתחת לאלמנט
+  const defaultTop = rect.bottom + gap;
+
+  // בדיקה: האם חורג מתחתית המסך?
+  if (defaultTop + tooltipRect.height > window.innerHeight) {
+    // אם כן: מציגים מעל האלמנט
+    top = rect.top - tooltipRect.height - gap;
+    arrowDirection = 'arrow-down';
+  } else {
+    // אם לא: מציגים מתחת לאלמנט
+    top = defaultTop;
+    arrowDirection = 'arrow-up';
+  }
+
+  // הוספת המחלקה המתאימה
+  tooltip.classList.add(arrowDirection);
+
+  // הוספת הגלילה (Scroll)
+  top += window.scrollY;
+
+
+  // --- 2. חישוב אופקי (מרכז/הזזה לצדדים) ---
+
+  let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+
+  if (left < padding) {
+    left = padding;
+  } else if (left + tooltipRect.width > window.innerWidth - padding) {
+    left = window.innerWidth - tooltipRect.width - padding;
+  }
+
+  left += window.scrollX;
+
+  // --- 3. השמה סופית ---
+  tooltip.style.top = `${top}px`;
+  tooltip.style.left = `${left}px`;
+}
+
+// --- 6. עדכון מיקום בזמן גלילה (אותו דבר) ---
+window.addEventListener('scroll', () => {
+  if (tooltip.style.display === 'block' && currentTarget) {
+    updateSmartPosition(currentTarget);
+  }
+});

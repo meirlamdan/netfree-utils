@@ -5,7 +5,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     fetch(
       `https://www.google.com/~netfree/test-url?u=${encodeURIComponent(
         url
-      )}`
+      )}&h=000000000000`
     )
       .then(r => r.json())
       .then(data => {

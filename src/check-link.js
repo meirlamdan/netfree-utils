@@ -13,15 +13,19 @@ tooltip.id = 'custom-ctrl-tooltip';
 document.body.appendChild(tooltip);
 
 let currentTarget = null;
+let isLoading = false;
 
 document.addEventListener('mouseover', async (event) => {
   const link = event.target.closest('a');
   if (link && event.ctrlKey) {
     if (currentTarget !== link) {
       hideTooltip();
+    } else if (isLoading) {
+      return;
     }
     currentTarget = link;
     try {
+      isLoading = true;
       tooltip.textContent = 'בודק...';
       tooltip.style.display = 'inline-block';
       updateSmartPosition(link);
@@ -41,6 +45,8 @@ document.addEventListener('mouseover', async (event) => {
         tooltip.textContent = '⚠️ שגיאה בקבלת מידע';
         updateSmartPosition(link);
       }
+    } finally {
+      isLoading = false;
     }
   } else if (currentTarget && currentTarget !== link) {
     hideTooltip();
@@ -64,6 +70,7 @@ document.addEventListener('keyup', (event) => {
 function hideTooltip() {
   tooltip.style.display = 'none';
   currentTarget = null;
+  isLoading = false;
   // ניקוי המחלקות הדינמיות (כפי שסיכמנו)
   tooltip.classList.remove('arrow-up', 'arrow-down');
 }

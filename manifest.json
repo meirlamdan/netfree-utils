@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NetFree-Utils",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "עזרים וכלים למשתמשי NetFree",
   "permissions": [
     "webRequest",

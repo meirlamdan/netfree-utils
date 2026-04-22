@@ -49,19 +49,82 @@
 
 #custom-ctrl-tooltip {
   position: absolute;
-  z-index: 2147483647; 
-  background-color: #ffffff;
-  color: #333333;
-  border: 1px solid #cccccc; 
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-family: sans-serif;
-  font-size: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 2147483647;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
   pointer-events: none;
   display: none;
   white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  background-color: #f8f9fa;
+  border: 1.5px solid #dee2e6;
+  color: #343a40;
+  direction: rtl;
 }
+
+#custom-ctrl-tooltip .nf-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  direction: rtl !important;
+}
+
+#custom-ctrl-tooltip .nf-status-icon {
+  display: flex;
+  align-items: center;
+}
+
+#custom-ctrl-tooltip .nf-domain-row {
+  margin-top: 4px;
+  font-size: 11px;
+  opacity: 0.72;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  text-align: center;
+}
+
+@keyframes nf-dot-pulse {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%           { opacity: 1;   transform: scale(1); }
+}
+
+#custom-ctrl-tooltip .nf-dots {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+
+#custom-ctrl-tooltip .nf-dots span {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: currentColor;
+  animation: nf-dot-pulse 1.2s infinite ease-in-out;
+}
+
+#custom-ctrl-tooltip .nf-dots span:nth-child(2) { animation-delay: 0.2s; }
+#custom-ctrl-tooltip .nf-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* --- Status modifier classes --- */
+
+#custom-ctrl-tooltip.nf-status--loading { background-color: #f0f4ff; border-color: #c5d3f0; color: #3b5bdb; }
+#custom-ctrl-tooltip.nf-status--open    { background-color: #ebfbee; border-color: #8ce99a; color: #2b8a3e; }
+#custom-ctrl-tooltip.nf-status--blocked { background-color: #fff5f5; border-color: #ffa8a8; color: #c92a2a; }
+#custom-ctrl-tooltip.nf-status--unknown { background-color: #fff9db; border-color: #ffe066; color: #856404; }
+#custom-ctrl-tooltip.nf-status--error   { background-color: #fff4e6; border-color: #ffc078; color: #d9480f; }
+
+/* --- Arrow structure --- */
 
 #custom-ctrl-tooltip::before,
 #custom-ctrl-tooltip::after {
@@ -77,30 +140,40 @@
   z-index: -1;
 }
 
-
 #custom-ctrl-tooltip::after {
   border-width: 5px;
   margin-left: -5px;
   z-index: 1;
 }
 
+/* Default arrow colors */
+#custom-ctrl-tooltip.arrow-up::before  { bottom: 100%;              border-color: transparent transparent #dee2e6 transparent; }
+#custom-ctrl-tooltip.arrow-up::after   { bottom: calc(100% - 1px);  border-color: transparent transparent #f8f9fa transparent; }
+#custom-ctrl-tooltip.arrow-down::before{ top: 100%;                 border-color: #dee2e6 transparent transparent transparent; }
+#custom-ctrl-tooltip.arrow-down::after { top: calc(100% - 1px);     border-color: #f8f9fa transparent transparent transparent; }
 
-/* --- 1. מצב: הטולטיפ מתחת לקישור (החץ מצביע למעלה) --- */
-#custom-ctrl-tooltip.arrow-up::before {
-  bottom: 100%;
-  border-color: transparent transparent #cccccc transparent; /* צבע המסגרת */
-}
-#custom-ctrl-tooltip.arrow-up::after {
-  bottom: calc(100% - 1px);
-  border-color: transparent transparent #ffffff transparent; /* צבע המילוי */
-}
+/* Status-specific arrow colors (higher specificity: 3 classes) */
+#custom-ctrl-tooltip.nf-status--loading.arrow-up::before  { border-color: transparent transparent #c5d3f0 transparent; }
+#custom-ctrl-tooltip.nf-status--loading.arrow-up::after   { border-color: transparent transparent #f0f4ff transparent; }
+#custom-ctrl-tooltip.nf-status--loading.arrow-down::before{ border-color: #c5d3f0 transparent transparent transparent; }
+#custom-ctrl-tooltip.nf-status--loading.arrow-down::after { border-color: #f0f4ff transparent transparent transparent; }
 
+#custom-ctrl-tooltip.nf-status--open.arrow-up::before  { border-color: transparent transparent #8ce99a transparent; }
+#custom-ctrl-tooltip.nf-status--open.arrow-up::after   { border-color: transparent transparent #ebfbee transparent; }
+#custom-ctrl-tooltip.nf-status--open.arrow-down::before{ border-color: #8ce99a transparent transparent transparent; }
+#custom-ctrl-tooltip.nf-status--open.arrow-down::after { border-color: #ebfbee transparent transparent transparent; }
 
-#custom-ctrl-tooltip.arrow-down::before {
-  top: 100%;
-  border-color: #cccccc transparent transparent transparent; /* צבע המסגרת */
-}
-#custom-ctrl-tooltip.arrow-down::after {
-  top: calc(100% - 1px);
-  border-color: #ffffff transparent transparent transparent; /* צבע המילוי */
-}
+#custom-ctrl-tooltip.nf-status--blocked.arrow-up::before  { border-color: transparent transparent #ffa8a8 transparent; }
+#custom-ctrl-tooltip.nf-status--blocked.arrow-up::after   { border-color: transparent transparent #fff5f5 transparent; }
+#custom-ctrl-tooltip.nf-status--blocked.arrow-down::before{ border-color: #ffa8a8 transparent transparent transparent; }
+#custom-ctrl-tooltip.nf-status--blocked.arrow-down::after { border-color: #fff5f5 transparent transparent transparent; }
+
+#custom-ctrl-tooltip.nf-status--unknown.arrow-up::before  { border-color: transparent transparent #ffe066 transparent; }
+#custom-ctrl-tooltip.nf-status--unknown.arrow-up::after   { border-color: transparent transparent #fff9db transparent; }
+#custom-ctrl-tooltip.nf-status--unknown.arrow-down::before{ border-color: #ffe066 transparent transparent transparent; }
+#custom-ctrl-tooltip.nf-status--unknown.arrow-down::after { border-color: #fff9db transparent transparent transparent; }
+
+#custom-ctrl-tooltip.nf-status--error.arrow-up::before  { border-color: transparent transparent #ffc078 transparent; }
+#custom-ctrl-tooltip.nf-status--error.arrow-up::after   { border-color: transparent transparent #fff4e6 transparent; }
+#custom-ctrl-tooltip.nf-status--error.arrow-down::before{ border-color: #ffc078 transparent transparent transparent; }
+#custom-ctrl-tooltip.nf-status--error.arrow-down::after { border-color: #fff4e6 transparent transparent transparent; }

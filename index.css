@@ -1,3 +1,54 @@
+/* ── Video list status badges ── */
+
+/* Make title text elements inline so the badge flows naturally before the text */
+a#video-title-link yt-formatted-string,
+a#video-title yt-formatted-string,
+a.shortsLockupViewModelHostOutsideMetadataEndpoint span.ytAttributedStringHost {
+  display: inline !important;
+}
+
+/* Playlist panel: badge + span side-by-side */
+ytd-playlist-panel-video-renderer h4:has(.nf-vbadge) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.nf-vbadge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  cursor: default !important;
+  pointer-events: none !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  line-height: 0 !important;
+  margin-inline-end: 5px !important;
+}
+
+.nf-vbadge--loading {
+  background: transparent !important;
+  border: 2px solid #dee2e6 !important;
+  border-top-color: #4dabf7 !important;
+  animation: nf-vbadge-spin 0.75s linear infinite !important;
+}
+.nf-vbadge--open    { background: #40c057 !important; }
+.nf-vbadge--blocked { background: #fa5252 !important; }
+.nf-vbadge--unknown { background: #fab005 !important; }
+.nf-vbadge--error   { background: #fd7e14 !important; }
+
+@keyframes nf-vbadge-spin {
+  to { transform: rotate(360deg); }
+}
+
 .popup {
   position: fixed;
   background: #ffffff;

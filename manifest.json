@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NetFree-Utils",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "עזרים וכלים למשתמשי NetFree",
   "permissions": [
     "webRequest",
@@ -31,6 +31,15 @@
       ],
       "css": [
         "index.css"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://www.youtube.com/*"
+      ],
+      "js": [
+        "src/video-list-checker.js"
       ],
       "run_at": "document_idle"
     }

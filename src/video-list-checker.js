@@ -22,7 +22,7 @@ const SITE_CONFIGS = [
     isVideoUrl(url) { return url.includes('/watch?v=') || url.includes('/shorts/'); },
 
     // Approach A: <a> elements that are themselves the title link
-    titleLinkSelector: 'a#video-title-link, a#video-title, a.shortsLockupViewModelHostOutsideMetadataEndpoint',
+    titleLinkSelector: 'a#video-title-link, a#video-title, a.shortsLockupViewModelHostOutsideMetadataEndpoint, a.ytLockupMetadataViewModelTitle',
 
     // Approach B: container elements where the title is a non-link element
     // getUrl returns the video URL; getBadgeRef returns the element to prepend the badge before

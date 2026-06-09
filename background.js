@@ -26,14 +26,24 @@ async function clearBlocked(tabId) {
   await chrome.storage.session.remove(`blocked_${tabId}`);
 }
 
+async function fetchBlockReason(url) {
+  try {
+    const res = await fetch(url);
+    if (res.status === 418) return await res.text();
+  } catch {}
+  return null;
+}
+
 chrome.webRequest.onCompleted.addListener(
   async (details) => {
     if (details.statusCode !== 418 || details.tabId < 0) return;
     const { tabId, url } = details;
 
     const list = await getBlocked(tabId);
-    if (list.includes(url)) return;
-    list.push(url);
+    if (list.some(item => item.url === url)) return;
+
+    const html = await fetchBlockReason(url);
+    list.push({ url, html });
     await setBlocked(tabId, list);
 
     chrome.action.setBadgeText({ text: String(list.length), tabId });

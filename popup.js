@@ -1,8 +1,8 @@
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   const tabId = tabs[0].id;
 
-  chrome.storage.local.get("blockedPerTab", (data) => {
-    const list = data.blockedPerTab?.[tabId] || [];
+  chrome.storage.session.get(`blocked_${tabId}`, (data) => {
+    const list = data[`blocked_${tabId}`] || [];
     const container = document.getElementById("blocked-list");
 
     if (list.length === 0) {

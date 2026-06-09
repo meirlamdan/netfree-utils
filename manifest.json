@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "NetFree-Utils",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "עזרים וכלים למשתמשי NetFree",
   "permissions": [
     "webRequest",
-    "storage"
+    "storage",
+    "webNavigation"
   ],
   "host_permissions": [
     "<all_urls>"

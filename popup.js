@@ -15,6 +15,8 @@ const BLOCK_LABELS = {
     buildRequestUrl: (url) => `https://netfree.link/app/#/tickets/new?u=${encodeURIComponent(url)}&r=&t=site&bi=` },
   'unknown-video': { text: 'וידאו טרם נבדק',  color: '#5f3dc4', bg: '#f3f0ff', border: '#b197fc',
     buildRequestUrl: (url) => `https://netfree.link/app/#/tickets/new?u=${encodeURIComponent(url)}&r=&t=video&bi=` },
+  'indev':         { text: 'בבדיקה',           color: '#2f9e44', bg: '#ebfbee', border: '#8ce99a' },
+  'badwords':      { text: 'רובוט זיהה תוכן לא ראוי', color: '#862e9c', bg: '#f8f0fc', border: '#da77f2' },
 };
 
 function parseBlockReason(html) {
@@ -26,6 +28,7 @@ function parseBlockReason(html) {
     return {
       block: json.block ?? null,
       url: json.page_info?.url ?? null,
+      technicalInfo: json.blockTechnicalInfo ?? null,
     };
   } catch {
     return null;
@@ -33,10 +36,11 @@ function parseBlockReason(html) {
 }
 
 function getBlockInfo(item) {
-  if (!item.html) return { accentColor: '#e8eaed', footerHtml: '' };
+  if (!item || !item.html) return { accentColor: '#e8eaed', footerHtml: '' };
 
   const parsed = parseBlockReason(item.html);
-  const label = parsed?.block ? BLOCK_LABELS[parsed.block] : null;
+  const label = parsed?.block ? (BLOCK_LABELS[parsed.block] ?? { text: parsed.block, color: '#5c5f66', bg: '#f8f9fa', border: '#dee2e6' }) : null;
+  // const label =  BLOCK_LABELS[parsed?.block] || null;
 
   if (label) {
     let text = label.text;
@@ -49,7 +53,11 @@ function getBlockInfo(item) {
       ? `<a class="request-link" href="${escapeHtml(requestUrl)}" target="_blank">שלח לבדיקה ←</a>`
       : '';
 
-    const badge = `<span class="block-tag" style="color:${label.color};background:${label.bg};border-color:${label.border}"><span class="block-dot" style="background:${label.color}"></span>${escapeHtml(text)}${requestLink}</span>`;
+    const copyTechBtn = parsed.technicalInfo
+      ? `<button class="copy-tech-btn" data-tech="${escapeHtml(parsed.technicalInfo)}">העתק פרטי חסימה</button>`
+      : '';
+
+    const badge = `<span class="block-tag" style="color:${label.color};background:${label.bg};border-color:${label.border}"><span class="block-dot" style="background:${label.color}"></span>${escapeHtml(text)}${requestLink}${copyTechBtn}</span>`;
 
     return {
       accentColor: label.color,
@@ -57,14 +65,14 @@ function getBlockInfo(item) {
     };
   }
 
-  // return {
-  //   accentColor: '#e8eaed',
-  //   footerHtml: `
-  //     <div class="block-reason-wrap">
-  //       <button class="copy-html-btn" data-html="${escapeHtml(item.html)}">העתק HTML</button>
-  //       <pre class="block-reason">${escapeHtml(item.html)}</pre>
-  //     </div>`,
-  // };
+  return {
+    accentColor: '#e8eaed',
+    footerHtml: `
+      <div class="block-reason-wrap">
+        <button class="copy-html-btn" data-html="${escapeHtml(item.html)}">העתק HTML</button>
+        <pre class="block-reason">${escapeHtml(item.html)}</pre>
+      </div>`,
+  };
 }
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -102,6 +110,17 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             this.textContent = '✓';
             this.style.color = 'green';
             setTimeout(() => { this.textContent = orig; this.style.color = ''; }, 1000);
+          });
+        });
+      });
+
+      document.querySelectorAll('.copy-tech-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const tech = this.getAttribute('data-tech');
+          navigator.clipboard.writeText(tech).then(() => {
+            const orig = this.textContent;
+            this.textContent = '✓ הועתק';
+            setTimeout(() => { this.textContent = orig; }, 1200);
           });
         });
       });

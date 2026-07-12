@@ -24,7 +24,11 @@ ytd-playlist-panel-video-renderer h4:has(.nf-vbadge) {
   border-radius: 50% !important;
   flex-shrink: 0 !important;
   cursor: default !important;
-  pointer-events: none !important;
+  /* pointer-events must stay enabled for the title tooltip to show on hover,
+     and the badge must sit above transparent click-overlays (YouTube lockups) */
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 100 !important;
   text-decoration: none !important;
   box-shadow: none !important;
   box-sizing: border-box !important;
@@ -44,6 +48,17 @@ ytd-playlist-panel-video-renderer h4:has(.nf-vbadge) {
 .nf-vbadge--blocked { background: #fa5252 !important; }
 .nf-vbadge--unknown { background: #fab005 !important; }
 .nf-vbadge--error   { background: #fd7e14 !important; }
+
+.nf-vbadge--sm {
+  width: 12px !important;
+  height: 12px !important;
+  min-width: 12px !important;
+}
+
+.nf-vbadge--sm svg {
+  width: 8px !important;
+  height: 8px !important;
+}
 
 @keyframes nf-vbadge-spin {
   to { transform: rotate(360deg); }

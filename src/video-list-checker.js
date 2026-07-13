@@ -202,6 +202,12 @@ function processNameElement(el, config) {
   // not marked, so the periodic rescan retries them if they become visible
   if (el.offsetWidth < 8) return;
 
+  // If an ancestor already carries a badge for this text (the site re-wrapped
+  // the text in a new inner element after it was badged), don't add another
+  for (let anc = el.parentElement; anc; anc = anc.parentElement) {
+    if (anc.querySelector(':scope > .nf-vbadge')) return;
+  }
+
   const name = el.textContent.trim().match(config.nameElements.pattern)[1];
 
   el.dataset.nfChecked = 'checking';

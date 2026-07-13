@@ -39,8 +39,8 @@ function getBlockInfo(item) {
   if (!item || !item.html) return { accentColor: '#e8eaed', footerHtml: '' };
 
   const parsed = parseBlockReason(item.html);
-  const label = parsed?.block ? (BLOCK_LABELS[parsed.block] ?? { text: parsed.block, color: '#5c5f66', bg: '#f8f9fa', border: '#dee2e6' }) : null;
-  // const label =  BLOCK_LABELS[parsed?.block] || null;
+  // const label = parsed?.block ? (BLOCK_LABELS[parsed.block] ?? { text: parsed.block, color: '#5c5f66', bg: '#f8f9fa', border: '#dee2e6' }) : null;
+  const label =  BLOCK_LABELS[parsed?.block] || null;
 
   if (label) {
     let text = label.text;
